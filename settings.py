@@ -16,6 +16,7 @@ DATE_TYPE_MONTHLY = 'monthly'
 DATE_TYPE_YEARLY = 'yearly'
 
 CREATED_TIME = 'created_time'
+TIME_START = 'time_start'
 PRICE = 'price'
 SALES = 'sales'
 DATE_TYPE = 'date_type'
