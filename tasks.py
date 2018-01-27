@@ -4,9 +4,9 @@ import datetime
 import pytz
 from celery import Celery
 from dateutil.relativedelta import relativedelta
-from pymongo import MongoClient
 
 import settings
+from utils import get_collections
 
 app = Celery(
     'tasks',
@@ -26,12 +26,9 @@ app.conf.task_routes = {
 def create_order(use_test_db=False, created_time=None, date_type=None):
     """生成数据价格为 1 的，创建时间为当前时间的订单"""
 
-    if use_test_db:
-        order_coll = MongoClient(settings.MONGO_URI)[settings.TEST_PAY_DB][settings.ORDER_COLL]
-        aggregate_coll = MongoClient(settings.MONGO_URI)[settings.TEST_PAY_DB][settings.AGGREGATE_COLL]
-    else:
-        order_coll = MongoClient(settings.MONGO_URI)[settings.PAY_DB][settings.ORDER_COLL]
-        aggregate_coll = MongoClient(settings.MONGO_URI)[settings.PAY_DB][settings.AGGREGATE_COLL]
+    collections = get_collections(use_test_db)
+    order_coll = collections[settings.ORDER_COLL]
+    aggregate_coll = collections[settings.AGGREGATE_COLL]
 
     order = {
         'created_time': created_time or datetime.datetime.utcnow(),
@@ -49,12 +46,9 @@ def create_order(use_test_db=False, created_time=None, date_type=None):
 def _calculate_sales(match_condition, aggregate_date_type, use_test_db=False):
     """根据 match_condition，计算出销售额"""
 
-    if use_test_db:
-        order_coll = MongoClient(settings.MONGO_URI)[settings.TEST_PAY_DB][settings.ORDER_COLL]
-        aggregate_coll = MongoClient(settings.MONGO_URI)[settings.TEST_PAY_DB][settings.AGGREGATE_COLL]
-    else:
-        order_coll = MongoClient(settings.MONGO_URI)[settings.PAY_DB][settings.ORDER_COLL]
-        aggregate_coll = MongoClient(settings.MONGO_URI)[settings.PAY_DB][settings.AGGREGATE_COLL]
+    collections = get_collections(use_test_db)
+    order_coll = collections[settings.ORDER_COLL]
+    aggregate_coll = collections[settings.AGGREGATE_COLL]
 
     if aggregate_date_type == settings.DATE_TYPE_MINUTELY:
         result = list(order_coll.aggregate([
