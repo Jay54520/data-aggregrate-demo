@@ -63,12 +63,12 @@ class TestAggregateData:
         while not async_result.successful():
             time.sleep(0.1)
         docs = list(self.aggregate_coll.find({
-            'date_type': settings.DATE_TYPE_MINUTELY
+            settings.DATE_TYPE: settings.DATE_TYPE_MINUTELY
         }))
         assert len(docs) == 1
         doc = docs[0]
-        assert doc['date_type'] == settings.DATE_TYPE_MINUTELY
-        assert doc['sales'] == 1
+        assert doc[settings.DATE_TYPE] == settings.DATE_TYPE_MINUTELY
+        assert doc[settings.SALES] == 1
 
     def test_hourly(self):
         local_now = datetime.datetime(
@@ -80,12 +80,12 @@ class TestAggregateData:
         while not async_result.successful():
             time.sleep(0.1)
         docs = list(self.aggregate_coll.find({
-            'date_type': settings.DATE_TYPE_HOURLY
+            settings.DATE_TYPE: settings.DATE_TYPE_HOURLY
         }))
         assert len(docs) == 1
         doc = docs[0]
-        assert doc['date_type'] == settings.DATE_TYPE_HOURLY
-        assert doc['sales'] == 2
+        assert doc[settings.DATE_TYPE] == settings.DATE_TYPE_HOURLY
+        assert doc[settings.SALES] == 2
 
     def test_daily(self):
         local_now = datetime.datetime(
@@ -97,12 +97,12 @@ class TestAggregateData:
         while not async_result.successful():
             time.sleep(0.1)
         docs = list(self.aggregate_coll.find({
-            'date_type': settings.DATE_TYPE_DAILY
+            settings.DATE_TYPE: settings.DATE_TYPE_DAILY
         }))
         assert len(docs) == 1
         doc = docs[0]
-        assert doc['date_type'] == settings.DATE_TYPE_DAILY
-        assert doc['sales'] == 2
+        assert doc[settings.DATE_TYPE] == settings.DATE_TYPE_DAILY
+        assert doc[settings.SALES] == 2
 
     def test_weekly(self):
         local_now = datetime.datetime(
@@ -115,12 +115,12 @@ class TestAggregateData:
             time.sleep(0.1)
 
         docs = list(self.aggregate_coll.find({
-            'date_type': settings.DATE_TYPE_WEEKLY
+            settings.DATE_TYPE: settings.DATE_TYPE_WEEKLY
         }))
         assert len(docs) == 1
         doc = docs[0]
-        assert doc['date_type'] == settings.DATE_TYPE_WEEKLY
-        assert doc['sales'] == 2
+        assert doc[settings.DATE_TYPE] == settings.DATE_TYPE_WEEKLY
+        assert doc[settings.SALES] == 2
 
     def test_monthly(self):
         local_now = datetime.datetime(
@@ -133,12 +133,12 @@ class TestAggregateData:
             time.sleep(0.1)
 
         docs = list(self.aggregate_coll.find({
-            'date_type': settings.DATE_TYPE_MONTHLY
+            settings.DATE_TYPE: settings.DATE_TYPE_MONTHLY
         }))
         assert len(docs) == 1
         doc = docs[0]
-        assert doc['date_type'] == settings.DATE_TYPE_MONTHLY
-        assert doc['sales'] == 2
+        assert doc[settings.DATE_TYPE] == settings.DATE_TYPE_MONTHLY
+        assert doc[settings.SALES] == 2
 
     def test_yearly(self):
         local_now = datetime.datetime(
@@ -151,9 +151,9 @@ class TestAggregateData:
             time.sleep(0.1)
 
         docs = list(self.aggregate_coll.find({
-            'date_type': settings.DATE_TYPE_YEARLY
+            settings.DATE_TYPE: settings.DATE_TYPE_YEARLY
         }))
         assert len(docs) == 1
         doc = docs[0]
-        assert doc['date_type'] == settings.DATE_TYPE_YEARLY
-        assert doc['sales'] == 2
+        assert doc[settings.DATE_TYPE] == settings.DATE_TYPE_YEARLY
+        assert doc[settings.SALES] == 2

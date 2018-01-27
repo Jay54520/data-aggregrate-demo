@@ -31,12 +31,12 @@ def create_order(use_test_db=False, created_time=None, date_type=None):
     aggregate_coll = collections[settings.AGGREGATE_COLL]
 
     order = {
-        'created_time': created_time or datetime.datetime.utcnow(),
-        'price': 1,
+        settings.CREATED_TIME: created_time or datetime.datetime.utcnow(),
+        settings.PRICE: 1,
     }
 
     if date_type:
-        order['date_type'] = date_type
+        order[settings.DATE_TYPE] = date_type
         aggregate_coll.insert(order)
     else:
         order_coll.insert(order)
@@ -53,22 +53,22 @@ def _calculate_sales(match_condition, aggregate_date_type, use_test_db=False):
     if aggregate_date_type == settings.DATE_TYPE_MINUTELY:
         result = list(order_coll.aggregate([
             {'$match': match_condition},
-            {'$group': {'_id': None, 'sales': {'$sum': '$price'}}}
+            {'$group': {'_id': None, settings.SALES: {'$sum': '${}'.format(settings.PRICE)}}}
         ]))
     else:
         result = list(aggregate_coll.aggregate([
             {'$match': match_condition},
-            {'$group': {'_id': None, 'sales': {'$sum': '$price'}}}
+            {'$group': {'_id': None, settings.SALES: {'$sum': '${}'.format(settings.PRICE)}}}
         ]))
 
     # 如果没有匹配的记录，那么销售额是 0
-    sales = 0 if not result else result[0]['sales']
+    sales = 0 if not result else result[0][settings.SALES]
     aggregate_coll.update_one(
         {
-            'date_type': aggregate_date_type,
-            'created_time': match_condition['created_time']['$gte'],
+            settings.DATE_TYPE: aggregate_date_type,
+            settings.CREATED_TIME: match_condition[settings.CREATED_TIME]['$gte'],
         },
-        {'$set': {'sales': sales}},
+        {'$set': {settings.SALES: sales}},
         upsert=True
     )
 
@@ -82,7 +82,7 @@ def aggregate(use_test_db=False, local_now=None):
     last_minute = current_minute - datetime.timedelta(minutes=1)
     signature = _calculate_sales.si(
         match_condition={
-            'created_time': {'$gte': last_minute, '$lt': current_minute},
+            settings.CREATED_TIME: {'$gte': last_minute, '$lt': current_minute},
         },
         aggregate_date_type=settings.DATE_TYPE_MINUTELY,
         use_test_db=use_test_db
@@ -94,8 +94,8 @@ def aggregate(use_test_db=False, local_now=None):
         last_hour = current_minute - datetime.timedelta(hours=1)
         signature |= _calculate_sales.si(
             match_condition={
-                'created_time': {'$gte': last_hour, '$lt': current_hour},
-                'date_type': settings.DATE_TYPE_MINUTELY
+                settings.CREATED_TIME: {'$gte': last_hour, '$lt': current_hour},
+                settings.DATE_TYPE: settings.DATE_TYPE_MINUTELY
             },
             aggregate_date_type=settings.DATE_TYPE_HOURLY,
             use_test_db=use_test_db
@@ -107,8 +107,8 @@ def aggregate(use_test_db=False, local_now=None):
         last_day = current_minute - datetime.timedelta(days=1)
         signature |= _calculate_sales.si(
             match_condition={
-                'created_time': {'$gte': last_day, '$lt': current_day},
-                'date_type': settings.DATE_TYPE_HOURLY
+                settings.CREATED_TIME: {'$gte': last_day, '$lt': current_day},
+                settings.DATE_TYPE: settings.DATE_TYPE_HOURLY
             },
             aggregate_date_type=settings.DATE_TYPE_DAILY,
             use_test_db=use_test_db
@@ -120,8 +120,8 @@ def aggregate(use_test_db=False, local_now=None):
         last_monday = current_minute - datetime.timedelta(weeks=1)
         signature |= _calculate_sales.si(
             match_condition={
-                'created_time': {'$gte': last_monday, '$lt': current_monday},
-                'date_type': settings.DATE_TYPE_DAILY
+                settings.CREATED_TIME: {'$gte': last_monday, '$lt': current_monday},
+                settings.DATE_TYPE: settings.DATE_TYPE_DAILY
             },
             aggregate_date_type=settings.DATE_TYPE_WEEKLY,
             use_test_db=use_test_db
@@ -133,8 +133,8 @@ def aggregate(use_test_db=False, local_now=None):
         last_month = current_month - relativedelta(months=1)
         signature |= _calculate_sales.si(
             match_condition={
-                'created_time': {'$gte': last_month, '$lt': current_month},
-                'date_type': settings.DATE_TYPE_DAILY
+                settings.CREATED_TIME: {'$gte': last_month, '$lt': current_month},
+                settings.DATE_TYPE: settings.DATE_TYPE_DAILY
             },
             aggregate_date_type=settings.DATE_TYPE_MONTHLY,
             use_test_db=use_test_db
@@ -147,8 +147,8 @@ def aggregate(use_test_db=False, local_now=None):
         last_year = current_year - relativedelta(years=1)
         signature |= _calculate_sales.si(
             match_condition={
-                'created_time': {'$gte': last_year, '$lt': current_year},
-                'date_type': settings.DATE_TYPE_MONTHLY
+                settings.CREATED_TIME: {'$gte': last_year, '$lt': current_year},
+                settings.DATE_TYPE: settings.DATE_TYPE_MONTHLY
             },
             aggregate_date_type=settings.DATE_TYPE_YEARLY,
             use_test_db=use_test_db

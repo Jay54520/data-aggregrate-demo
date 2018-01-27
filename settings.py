@@ -14,3 +14,8 @@ DATE_TYPE_DAILY = 'daily'
 DATE_TYPE_WEEKLY = 'weekly'
 DATE_TYPE_MONTHLY = 'monthly'
 DATE_TYPE_YEARLY = 'yearly'
+
+CREATED_TIME = 'created_time'
+PRICE = 'price'
+SALES = 'sales'
+DATE_TYPE = 'date_type'
