@@ -60,8 +60,7 @@ class TestAggregateData:
         )
         self._generate_data(settings.DATE_TYPE_MINUTELY, local_now)
         async_result = aggregate(use_test_db=True, local_now=local_now)
-        while not async_result.successful():
-            time.sleep(0.1)
+        self.is_task_success(async_result)
         docs = list(self.aggregate_coll.find({
             settings.DATE_TYPE: settings.DATE_TYPE_MINUTELY
         }))
@@ -77,8 +76,7 @@ class TestAggregateData:
         )
         self._generate_data(settings.DATE_TYPE_HOURLY, local_now)
         async_result = aggregate(use_test_db=True, local_now=local_now)
-        while not async_result.successful():
-            time.sleep(0.1)
+        self.is_task_success(async_result)
         docs = list(self.aggregate_coll.find({
             settings.DATE_TYPE: settings.DATE_TYPE_HOURLY
         }))
@@ -94,8 +92,7 @@ class TestAggregateData:
         )
         self._generate_data(settings.DATE_TYPE_DAILY, local_now)
         async_result = aggregate(use_test_db=True, local_now=local_now)
-        while not async_result.successful():
-            time.sleep(0.1)
+        self.is_task_success(async_result)
         docs = list(self.aggregate_coll.find({
             settings.DATE_TYPE: settings.DATE_TYPE_DAILY
         }))
@@ -111,8 +108,7 @@ class TestAggregateData:
         )
         self._generate_data(settings.DATE_TYPE_WEEKLY, local_now)
         async_result = aggregate(use_test_db=True, local_now=local_now)
-        while not async_result.successful():
-            time.sleep(0.1)
+        self.is_task_success(async_result)
 
         docs = list(self.aggregate_coll.find({
             settings.DATE_TYPE: settings.DATE_TYPE_WEEKLY
@@ -129,8 +125,7 @@ class TestAggregateData:
         )
         self._generate_data(settings.DATE_TYPE_MONTHLY, local_now)
         async_result = aggregate(use_test_db=True, local_now=local_now)
-        while not async_result.successful():
-            time.sleep(0.1)
+        self.is_task_success(async_result)
 
         docs = list(self.aggregate_coll.find({
             settings.DATE_TYPE: settings.DATE_TYPE_MONTHLY
@@ -147,9 +142,7 @@ class TestAggregateData:
         )
         self._generate_data(settings.DATE_TYPE_YEARLY, local_now)
         async_result = aggregate(use_test_db=True, local_now=local_now)
-        while not async_result.successful():
-            time.sleep(0.1)
-
+        self.is_task_success(async_result)
         docs = list(self.aggregate_coll.find({
             settings.DATE_TYPE: settings.DATE_TYPE_YEARLY
         }))
@@ -157,3 +150,13 @@ class TestAggregateData:
         doc = docs[0]
         assert doc[settings.DATE_TYPE] == settings.DATE_TYPE_YEARLY
         assert doc[settings.SALES] == 2
+
+    def is_task_success(self, async_result):
+        counter = 0
+        while not async_result.successful():
+            if counter > 30:
+                raise Exception('任务超时')
+
+            time.sleep(0.1)
+            counter += 1
+        return True
