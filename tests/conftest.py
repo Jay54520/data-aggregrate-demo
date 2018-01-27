@@ -9,3 +9,9 @@ import settings
 def order_coll():
     yield MongoClient(settings.MONGO_URI)[settings.TEST_PAY_DB][settings.ORDER_COLL]
     MongoClient(settings.MONGO_URI).drop_database(settings.TEST_PAY_DB)
+
+
+@pytest.fixture
+def aggregate_coll():
+    yield MongoClient(settings.MONGO_URI)[settings.TEST_PAY_DB][settings.AGGREGATE_COLL]
+    MongoClient(settings.MONGO_URI).drop_database(settings.TEST_PAY_DB)
