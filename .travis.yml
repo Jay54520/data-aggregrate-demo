@@ -1,0 +1,12 @@
+language: python
+python:
+  - "3.6"
+services:
+  - redis-server
+  - mongodb
+install:
+  - pip install -r requirements.txt
+before_script:
+  - nohup celery -A tasks worker --loglevel=info -Q aggregate -c 1 &
+script:
+  - pytest
