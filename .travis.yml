@@ -9,4 +9,6 @@ install:
 before_script:
   - nohup celery -A tasks worker --loglevel=info -Q aggregate -c 1 &
 script:
-  - pytest
+  - pytest --cov=./
+after_success:
+  - codecov

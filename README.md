@@ -1,6 +1,7 @@
 # 数据聚合示例
 
 [![Build Status](https://travis-ci.org/Jay54520/data-aggregrate-demo.svg?branch=master)](https://travis-ci.org/Jay54520/data-aggregrate-demo)
+[![codecov](https://codecov.io/gh/Jay54520/data-aggregrate-demo/branch/master/graph/badge.svg)](https://codecov.io/gh/Jay54520/data-aggregrate-demo)
 
 聚合级别由分钟到年的聚合示例。
 
