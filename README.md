@@ -3,7 +3,10 @@
 [![Build Status](https://travis-ci.org/Jay54520/data-aggregrate-demo.svg?branch=master)](https://travis-ci.org/Jay54520/data-aggregrate-demo)
 [![codecov](https://codecov.io/gh/Jay54520/data-aggregrate-demo/branch/master/graph/badge.svg)](https://codecov.io/gh/Jay54520/data-aggregrate-demo)
 
-聚合级别由分钟到年的聚合示例。
+聚合级别由分钟到年的聚合示例。小时的数据由分钟聚合，天的数据由小时聚合，
+周、月的数据由天聚合，年的数据由月聚合。适用于数据量大，实时计算太过耗时的情况。
+
+这里的例子是由订单价格聚合出销售额。
 
 ## 开始
 
